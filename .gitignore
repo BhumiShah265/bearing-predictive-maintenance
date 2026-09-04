@@ -1,0 +1,28 @@
+# Python & Virtualenv
+venv/
+ENV/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Large Datasets & Raw Binaries (Keep models/ directory for inference weights)
+data/raw/
+*.mat
+*.npz
+*.npy
+
+# macOS / OS Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# Log files
+*.log

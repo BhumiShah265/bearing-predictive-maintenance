@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Bearing Predictive Maintenance System</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Chart.js for interactive signal & FFT graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="navbar">
+      <div class="logo-group">
+        <div class="status-indicator active"></div>
+        <h1>AI Predictive Maintenance <span>v1.0</span></h1>
+      </div>
+      <div class="system-meta">
+        <span class="meta-tag">CWRU 12kHz Benchmark</span>
+        <span class="meta-tag">1750 RPM</span>
+        <span class="badge online">Model: Active</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard">
+      <!-- Left Panel: Input & Controls -->
+      <section class="panel control-panel">
+        <h2>Vibration Signal Input</h2>
+        <p class="panel-subtitle">Upload raw motor accelerometer data or select a benchmark preset to analyze bearing condition.</p>
+
+        <!-- Drag & Drop Upload Zone -->
+        <div class="upload-zone" id="dropZone">
+          <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          <div class="upload-text">
+            <strong>Drag & Drop vibration file</strong>
+            <span>Supports .MAT, .CSV, .NPY, .TXT</span>
+          </div>
+          <input type="file" id="fileInput" accept=".mat,.csv,.npy,.txt,.json" hidden>
+          <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+        </div>
+
+        <!-- Preset Buttons -->
+        <div class="presets-group">
+          <label>Or test instant CWRU baseline samples:</label>
+          <div class="preset-buttons">
+            <button class="btn preset-btn normal" onclick="loadSample('normal')">Normal Healthy</button>
+            <button class="btn preset-btn ir" onclick="loadSample('inner_race')">Inner Race Fault</button>
+            <button class="btn preset-btn or" onclick="loadSample('outer_race')">Outer Race Fault</button>
+            <button class="btn preset-btn ball" onclick="loadSample('ball')">Ball Fault</button>
+          </div>
+        </div>
+
+        <!-- Diagnostic Summary Output -->
+        <div class="diagnosis-card" id="diagnosisCard">
+          <div class="card-header">
+            <span class="card-title">Predicted Mechanical Condition</span>
+            <span class="confidence-badge" id="confidenceVal">--</span>
+          </div>
+          <div class="fault-display" id="faultResult">Ready for Signal</div>
+
+          <!-- Probability Breakdown -->
+          <div class="probability-container" id="probContainer">
+            <!-- Dynamic probability bars -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Visualizations & Physical Features -->
+      <section class="panel analytics-panel">
+        <!-- Visualizations Header -->
+        <div class="panel-tabs">
+          <button class="tab-btn active" onclick="switchTab('timeTab')">Time-Domain Signal</button>
+          <button class="tab-btn" onclick="switchTab('fftTab')">Frequency Spectrum (FFT)</button>
+          <button class="tab-btn" onclick="switchTab('specTab')">STFT Spectrogram</button>
+        </div>
+
+        <!-- Chart Containers -->
+        <div class="chart-wrapper tab-content active" id="timeTab">
+          <canvas id="timeChart"></canvas>
+        </div>
+        <div class="chart-wrapper tab-content" id="fftTab">
+          <canvas id="fftChart"></canvas>
+        </div>
+        <div class="chart-wrapper tab-content" id="specTab">
+          <div class="spectrogram-placeholder" id="specContainer">
+            <p>Spectrogram STFT Matrix loaded upon signal analysis.</p>
+          </div>
+        </div>
+
+        <!-- Relevant Physical Features Grid -->
+        <div class="features-section">
+          <h3>Extracted Physical & Spectral Features</h3>
+          <div class="features-grid" id="featuresGrid">
+            <div class="feature-card"><span class="feat-name">RMS (Energy)</span><span class="feat-val" id="featRms">--</span></div>
+            <div class="feature-card"><span class="feat-name">Kurtosis (Impulsiveness)</span><span class="feat-val" id="featKurt">--</span></div>
+            <div class="feature-card"><span class="feat-name">Crest Factor</span><span class="feat-val" id="featCrest">--</span></div>
+            <div class="feature-card"><span class="feat-name">Peak-to-Peak</span><span class="feat-val" id="featP2P">--</span></div>
+            <div class="feature-card"><span class="feat-name">Dominant Frequency</span><span class="feat-val" id="featDomFreq">--</span></div>
+            <div class="feature-card"><span class="feat-name">Spectral Centroid</span><span class="feat-val" id="featCentroid">--</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
